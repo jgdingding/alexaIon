@@ -51,7 +51,25 @@ const data = [
 
 const handlers = {
     'LaunchRequest': function () {
-     
+			var result ="";
+			request.get( {url:ion_api_request_url}, 
+				// callback for when we get a response
+				function (e, r, body) {
+					
+
+					// THE RESULT FROM ION API IS STRINGIFIED JSON
+				var res_object = JSON.parse(body);
+
+					//body will contain the data
+				listblocks =  res_object['results'][0]['day_type']['blocks'];
+				daytype = res_object['results'][0]['day_type'].name.substring(0,res_object['results'][0]['day_type'].name.indexOf("<br>"));
+				result+="Today is a "+daytype+". The schedule is ";
+				for(var i=0;i<listblocks.length;i++){
+					result+=listblocks[i][name]+" from "+listblocks[i][start]+" to "+listblocks[i][end]+".";
+				}
+				this.emit(":tell",result);
+				}
+			);	     
         
         //if https://stackoverflow.com/questions/47973232/alexa-sdk-response-listenreprompt-speech, add a slot for yes?????
         this.emit('GetNewFactIntent');
